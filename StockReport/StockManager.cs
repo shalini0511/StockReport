@@ -12,18 +12,16 @@ using Newtonsoft.Json;
 namespace StockReport
 {
     class StockManager
-    {
+    { //Local variables
         int totalshare;
         LinkedList<string> timeOfTransaction = new LinkedList<string>();
-        LinkedList<string> stockPurchased = new LinkedList<string>();
-        LinkedList<string> stockSold = new LinkedList<string>();
         //Display Stock Details
         public void DisplayStocks(LinkedList<StockUtility.Stocks> stocksList)
         {
             Console.WriteLine("***********DISPLAYING STOCK DETAILS***************");
             foreach (var i in stocksList)
             {
-                Console.WriteLine("\nStock name is: {0} \nStock share is: {1} \nStock Price is: {2}", i.StockName, i.shares, i.Price);
+                Console.WriteLine("Stock name is: {0} \nStock share is: {1} \nStock Price is: {2}", i.StockName, i.shares, i.Price);
                 int temp = i.shares * i.Price;
                 totalshare += temp;
                 Console.WriteLine("Total stock price for {0} is : {1}", i.StockName, temp);
@@ -65,13 +63,13 @@ namespace StockReport
             Console.WriteLine("***********DISPLAYING ACCOUNT DETAILS***************");
             foreach (var i in AccountList)
             {
-                Console.WriteLine("\nStock holder {0}", i.Stockholder);
+                Console.WriteLine("Stock holder {0}", i.Stockholder);
                 Console.WriteLine("Stock name is: {0} \nStock share is: {1} \nStock Price is: {2}", i.StockName, i.shares, i.Price);
                 int temp = i.shares * i.Price;
                 totalshare += temp;
                 Console.WriteLine("Total stock price for {0} is : {1}", i.StockName, temp);
             }
-            Console.WriteLine("Total stock share is : {0}", totalshare);
+            Console.WriteLine("Total store is : {0}", totalshare);
 
         }
         //Account details are printed
@@ -91,7 +89,6 @@ namespace StockReport
             var fs1 = accountUtility.AccountList;
             AddStockAccount(fs1, company, amount);
             File.WriteAllText(acc, JsonConvert.SerializeObject(accountUtility));
-            stockPurchased.AddLast("Company: " + company + " Amount: " + amount);
             DisplayAccount(fs1);
         }
         //Method to sell a stock
@@ -102,17 +99,15 @@ namespace StockReport
             var fs1 = accountUtility.AccountList;
             SellStockAccount(fs1, company, amount);
             File.WriteAllText(acc, JsonConvert.SerializeObject(accountUtility));
-            stockSold.AddLast("Company: " + company + " Amount: " + amount);
             DisplayAccount(fs1);
         }
         //Perform sell operation on Account
         public void SellStockAccount(List<AccountUtility.Account> accountlist, string company, int amount)
         {
             string file = @"C:\Users\DELL\Desktop\StockMarket\StockMarket\Json.json";
-            string acc = @"C:\Users\DELL\Desktop\StockMarket\StockMarket\account.json";
-            AccountUtility accountUtility = JsonConvert.DeserializeObject<AccountUtility>(File.ReadAllText(acc));
             StockUtility stockUtility = JsonConvert.DeserializeObject<StockUtility>(File.ReadAllText(file));
             var fs = stockUtility.stocksList;
+
             foreach (var stockavail in fs)
             {
                 if (stockavail.StockName == company && stockavail.shares >= 0)
@@ -122,46 +117,44 @@ namespace StockReport
 
                         Account account1 = new Account();
 
-                        if (member.StockName == company && member.shares >= 1)
+                        if (member.StockName == company)
                         {
-                            Console.WriteLine("Updated!");
+                            Console.WriteLine("Updated");
 
-                            Console.WriteLine("\nEnter the stock holder name: ");
+                            Console.WriteLine("Enter the stock holder: ");
                             account1.Stockholder = Console.ReadLine();
                             account1.StockName = company;
                             account1.shares = member.shares - 1;
                             account1.Price = amount;
                             accountlist.Remove(member);
-
-                            stockavail.shares += 1;
                             accountlist.Add(account1);
-                            File.WriteAllText(file, JsonConvert.SerializeObject(stockUtility));
+                            stockavail.shares += 1;
                             DateTime time = DateTime.Now;
                             Console.WriteLine("Sold the Share at: " + time);
-                            timeOfTransaction.AddFirst("Sold company " + company + " at time " + Convert.ToString(time));
-
+                            timeOfTransaction.AddFirst("Sold compant " + company + " at time " + Convert.ToString(time));
+                            File.WriteAllText(file, JsonConvert.SerializeObject(stockUtility));
                             break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Stocks not available");
                         }
                     }
                 }
             }
+
         }
         //Perform buy operation on Account
         public void AddStockAccount(List<AccountUtility.Account> accountlist, string company, int amount)
         {
             string file = @"C:\Users\DELL\Desktop\StockMarket\StockMarket\Json.json";
-            string acc = @"C:\Users\DELL\Desktop\StockMarket\StockMarket\account.json";
-            AccountUtility accountUtility = JsonConvert.DeserializeObject<AccountUtility>(File.ReadAllText(acc));
             StockUtility stockUtility = JsonConvert.DeserializeObject<StockUtility>(File.ReadAllText(file));
             var fs = stockUtility.stocksList;
-            int flag = 0;
-            int present = 0;
 
             foreach (var stockavail in fs)
             {
                 if (stockavail.StockName == company && stockavail.shares >= 1)
                 {
-                    flag = 1;
                     foreach (var member in accountlist)
                     {
 
@@ -171,69 +164,30 @@ namespace StockReport
                         {
                             Console.WriteLine("Updated");
 
-                            Console.WriteLine("Enter the stock holder name: ");
+                            Console.WriteLine("Enter the stock holder: ");
                             account1.Stockholder = Console.ReadLine();
                             account1.StockName = company;
                             account1.shares = member.shares + 1;
                             account1.Price = amount;
                             accountlist.Remove(member);
-                            stockavail.shares -= 1;
                             accountlist.Add(account1);
+                            stockavail.shares -= 1;
                             DateTime time = DateTime.Now;
                             Console.WriteLine("Bought the Share at: " + time);
-                            timeOfTransaction.AddFirst("Bought company " + company + " at time " + Convert.ToString(time));
+                            timeOfTransaction.AddFirst("Bought compant " + company + " at time " + Convert.ToString(time));
                             File.WriteAllText(file, JsonConvert.SerializeObject(stockUtility));
-                            present = 1;
                             break;
                         }
                     }
-
                 }
-                if (flag == 1 && present == 0)
-                {
-                    Account account1 = new Account();
-                    Console.WriteLine("Enter the stock holder name: ");
-                    account1.Stockholder = Console.ReadLine();
-                    account1.StockName = company;
-                    account1.shares = 1;
-                    account1.Price = amount;
-                    stockavail.shares -= 1;
-                    accountlist.Add(account1);
-                    DateTime time = DateTime.Now;
-                    Console.WriteLine("Bought the Share at: " + time);
-                    timeOfTransaction.AddFirst("Bought company " + company + " at time " + Convert.ToString(time));
-                    File.WriteAllText(file, JsonConvert.SerializeObject(stockUtility));
-                    break;
-                }
-
-            }
-            if (flag == 0)
-            {
-                Console.WriteLine("Stocks not available");
             }
 
         }
         //To print date and time of transaction
         public void DateandTime()
         {
-            Console.WriteLine("\n--------------The Date and Time of transactions--------------\n");
+            Console.WriteLine("The Date and Time of transactions");
             foreach (var time in timeOfTransaction)
-            {
-                Console.WriteLine(time);
-            }
-        }
-        public void StockPurchased()
-        {
-            Console.WriteLine("\n--------------List of stock purchased--------------\n");
-            foreach (var time in stockPurchased)
-            {
-                Console.WriteLine(time);
-            }
-        }
-        public void StockSold()
-        {
-            Console.WriteLine("\n--------------List of stock sold--------------\n");
-            foreach (var time in stockSold)
             {
                 Console.WriteLine(time);
             }

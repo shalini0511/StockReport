@@ -18,4 +18,5 @@ namespace StockReport
             public int Price { get; set; }
         }
     }
+    
 }
