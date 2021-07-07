@@ -1,0 +1,22 @@
+﻿{
+    "AccountList": [
+        {
+            "Stockholder": "Ash",
+            "StockName": "Binance",
+            "shares": 1,
+            "Price": 180
+        },
+        {
+            "Stockholder": "Ash",
+            "StockName": "J&J",
+            "shares": 2,
+            "Price": 100
+        },
+        {
+            "Stockholder": "Ash",
+            "StockName": "HDFC",
+            "shares": 3,
+            "Price": 10
+        }
+    ]
+}
