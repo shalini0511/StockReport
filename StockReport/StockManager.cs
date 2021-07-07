@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace StockReport
 {
     class StockManager
-    {
+    {//Local variables
         int totalshare;
         LinkedList<string> timeOfTransaction = new LinkedList<string>();
         LinkedList<string> stockPurchased = new LinkedList<string>();

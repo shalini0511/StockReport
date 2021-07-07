@@ -13,6 +13,7 @@ namespace StockReport
         static void Main(string[] args)
         {
 
+
             //Creating obj for StockManager
             StockManager stockManager = new StockManager();
             //getting path of json file
